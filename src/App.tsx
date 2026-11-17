@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
-import { LandingPage } from './components/LandingPage';
 import { OnboardingScreen } from './components/OnboardingScreen';
 import { DashboardScreen } from './components/DashboardScreen';
 import { ReportScreen } from './components/ReportScreen';
@@ -9,7 +8,6 @@ import { SettingsModal } from './components/SettingsModal';
 import { HealthDrawer } from './components/HealthDrawer';
 import { HistoryModal } from './components/HistoryModal';
 import { analyzeWithGemini } from './services/gemini';
-import { ArrowLeft, Smartphone } from 'lucide-react';
 import type { Screen, ScanResult, UserSettings, AttachedFile } from './types';
 
 const DEFAULT_SETTINGS: UserSettings = {
@@ -19,9 +17,6 @@ const DEFAULT_SETTINGS: UserSettings = {
 };
 
 export const App: React.FC = () => {
-  // Check if viewing standalone landing page or app
-  const [viewMode, setViewMode] = useState<'landing' | 'app'>('landing');
-
   const [currentScreen, setCurrentScreen] = useState<Screen>(() => {
     const onboarded = localStorage.getItem('hasOnboarded');
     return onboarded === 'true' ? 'dashboard' : 'onboarding';
@@ -147,46 +142,24 @@ export const App: React.FC = () => {
     localStorage.removeItem('scamsuno_history');
   };
 
-  // If in Landing Page mode, render the rich BlindSight-style landing page
-  if (viewMode === 'landing') {
-    return (
-      <LandingPage onLaunchApp={() => setViewMode('app')} />
-    );
-  }
-
-  // App mode with back to landing page button
+  // Pure Web Companion App
   const canvasBgClass = settings.theme === 'slate' ? 'bg-[#121724]' : 'bg-[#0B0D13]';
   const outerBgClass = settings.theme === 'slate' ? 'bg-[#0A0D15]' : 'bg-[#07080D]';
 
   return (
-    <div className={`min-h-screen w-full ${outerBgClass} flex flex-col items-center justify-center p-0 sm:p-3 md:p-5 overflow-x-hidden transition-colors duration-300 relative`}>
-      {/* Top Bar Switcher to return to Landing Page */}
-      <div className="w-full max-w-[410px] flex items-center justify-between px-3 py-2 z-40">
-        <button
-          onClick={() => setViewMode('landing')}
-          className="flex items-center space-x-1.5 px-3 py-1.5 rounded-full bg-white/10 hover:bg-white/15 text-xs text-gray-300 hover:text-white transition-all backdrop-blur-md"
-        >
-          <ArrowLeft className="w-3.5 h-3.5" />
-          <span>Landing Page & APK</span>
-        </button>
-        <span className="text-[11px] font-mono text-amber-400 bg-amber-500/15 border border-amber-500/30 px-2 py-0.5 rounded-full flex items-center space-x-1">
-          <Smartphone className="w-3 h-3 text-[#f59e0b]" />
-          <span>Prototype v1.0.0</span>
-        </span>
-      </div>
-
+    <div className={`min-h-[100dvh] w-full ${outerBgClass} flex flex-col items-center justify-center p-0 sm:p-4 overflow-x-hidden transition-colors duration-300 relative`}>
       {/* Background ambient lighting */}
       <div className="fixed inset-0 pointer-events-none">
         <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[500px] h-[500px] bg-[#FF6B00]/10 rounded-full blur-[140px]" />
         <div className="absolute bottom-1/4 left-1/2 -translate-x-1/2 w-[400px] h-[400px] bg-[#FF3D00]/5 rounded-full blur-[120px]" />
       </div>
 
-      {/* Screen Frame Container (Mobile-first, Responsive) */}
-      <div className={`relative w-full max-w-[410px] h-[calc(100dvh-50px)] sm:h-[min(844px,92vh)] ${canvasBgClass} sm:rounded-[40px] sm:border-[6px] sm:border-[#1E2536] shadow-[0_24px_64px_rgba(0,0,0,0.9),0_0_0_1px_rgba(255,255,255,0.08)] overflow-hidden flex flex-col justify-between transition-colors duration-300 my-auto`}>
+      {/* Screen Frame Container (Full screen on mobile, phone frame on desktop) */}
+      <div className={`relative w-full max-w-[430px] h-[100dvh] sm:h-[844px] ${canvasBgClass} sm:rounded-[44px] sm:border-[8px] sm:border-[#1E2536] shadow-[0_24px_64px_rgba(0,0,0,0.9),0_0_0_1px_rgba(255,255,255,0.08)] overflow-hidden flex flex-col justify-between transition-colors duration-300 my-auto`}>
         {/* Prototype Phase Ribbon Banner */}
-        <div className="w-full bg-amber-500/10 border-b border-amber-500/20 py-1 px-3 text-center text-[10px] font-mono text-amber-300 font-medium z-30 flex items-center justify-center space-x-1.5">
+        <div className="w-full bg-amber-500/10 border-b border-amber-500/20 py-1.5 px-3 text-center text-[10px] font-mono text-amber-300 font-medium z-30 flex items-center justify-center space-x-1.5">
           <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse" />
-          <span>PROTOTYPE PHASE &bull; EXPERIMENTAL BUILD</span>
+          <span>PROTOTYPE PHASE &bull; SUNOSCAM AI SCAM GUARD</span>
         </div>
 
         {/* Screen Transitions */}
