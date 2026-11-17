@@ -67,6 +67,17 @@ export const App: React.FC = () => {
     }
   }, [history]);
 
+  // Safety: If on report screen without a result, fall back to dashboard
+  useEffect(() => {
+    if (currentScreen === 'report' && !currentResult) {
+      if (history.length > 0) {
+        setCurrentResult(history[0]);
+      } else {
+        setCurrentScreen('dashboard');
+      }
+    }
+  }, [currentScreen, currentResult, history]);
+
   const handleGetStarted = () => {
     localStorage.setItem('hasOnboarded', 'true');
     setCurrentScreen('dashboard');
@@ -115,8 +126,8 @@ export const App: React.FC = () => {
     } catch (err: unknown) {
       console.error('Scan error:', err);
       setIsScanning(false);
-      // Explicit error banner as required
-      setApiError('API Error: Check API Key in Settings');
+      const errMsg = err instanceof Error ? err.message : 'API Error: Check API Key in Settings';
+      setApiError(errMsg);
     }
   };
 
@@ -136,7 +147,7 @@ export const App: React.FC = () => {
   const outerBgClass = settings.theme === 'slate' ? 'bg-[#0A0D15]' : 'bg-[#07080D]';
 
   return (
-    <div className={`min-h-screen w-full ${outerBgClass} flex items-center justify-center p-0 sm:p-4 md:p-6 overflow-x-hidden transition-colors duration-300`}>
+    <div className={`min-h-screen w-full ${outerBgClass} flex items-center justify-center p-0 sm:p-3 md:p-5 overflow-x-hidden transition-colors duration-300`}>
       {/* Background ambient lighting */}
       <div className="fixed inset-0 pointer-events-none">
         <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[500px] h-[500px] bg-[#FF6B00]/10 rounded-full blur-[140px]" />
@@ -144,66 +155,65 @@ export const App: React.FC = () => {
       </div>
 
       {/* Screen Frame Container (Mobile-first, Responsive) */}
-      <div className={`relative w-full sm:max-w-[390px] h-screen sm:h-[844px] ${canvasBgClass} sm:rounded-[48px] sm:border-[8px] sm:border-[#1E2536] shadow-[0_24px_64px_rgba(0,0,0,0.9),0_0_0_1px_rgba(255,255,255,0.08)] overflow-hidden flex flex-col transition-colors duration-300`}>
-        {/* Subtle Screen Bezel Reflection on desktop */}
-        <div className="absolute inset-0 pointer-events-none sm:rounded-[40px] shadow-[inset_0_0_2px_1px_rgba(255,255,255,0.1)] z-30" />
-
+      <div className={`relative w-full max-w-[410px] h-[100dvh] sm:h-[min(844px,96vh)] ${canvasBgClass} sm:rounded-[40px] sm:border-[6px] sm:border-[#1E2536] shadow-[0_24px_64px_rgba(0,0,0,0.9),0_0_0_1px_rgba(255,255,255,0.08)] overflow-hidden flex flex-col justify-between transition-colors duration-300 my-auto`}>
         {/* Screen Transitions */}
-        <AnimatePresence mode="wait">
-          {currentScreen === 'onboarding' && (
-            <motion.div
-              key="screen-onboarding"
-              initial={{ opacity: 0, scale: 0.98 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.98 }}
-              transition={{ duration: 0.35, ease: 'easeInOut' }}
-              className="w-full h-full"
-            >
-              <OnboardingScreen onGetStarted={handleGetStarted} />
-            </motion.div>
-          )}
+        <div className="relative w-full h-full flex-1 flex flex-col overflow-hidden">
+          <AnimatePresence mode="wait">
+            {currentScreen === 'onboarding' && (
+              <motion.div
+                key="screen-onboarding"
+                initial={{ opacity: 0, scale: 0.98 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.98 }}
+                transition={{ duration: 0.3, ease: 'easeInOut' }}
+                className="w-full h-full"
+              >
+                <OnboardingScreen onGetStarted={handleGetStarted} />
+              </motion.div>
+            )}
 
-          {currentScreen === 'dashboard' && (
-            <motion.div
-              key="screen-dashboard"
-              initial={{ opacity: 0, scale: 0.98 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.98 }}
-              transition={{ duration: 0.35, ease: 'easeInOut' }}
-              className="w-full h-full"
-            >
-              <DashboardScreen
-                onNavigate={setCurrentScreen}
-                onOpenScanSheet={handleOpenScanSheet}
-                onOpenSettings={() => setIsSettingsOpen(true)}
-                onOpenHealth={() => setIsHealthOpen(true)}
-                onOpenHistory={() => setIsHistoryOpen(true)}
-                isScanning={isScanning}
-                apiError={apiError}
-              />
-            </motion.div>
-          )}
+            {currentScreen === 'dashboard' && (
+              <motion.div
+                key="screen-dashboard"
+                initial={{ opacity: 0, scale: 0.98 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.98 }}
+                transition={{ duration: 0.3, ease: 'easeInOut' }}
+                className="w-full h-full"
+              >
+                <DashboardScreen
+                  onNavigate={setCurrentScreen}
+                  onOpenScanSheet={handleOpenScanSheet}
+                  onOpenSettings={() => setIsSettingsOpen(true)}
+                  onOpenHealth={() => setIsHealthOpen(true)}
+                  onOpenHistory={() => setIsHistoryOpen(true)}
+                  isScanning={isScanning}
+                  apiError={apiError}
+                />
+              </motion.div>
+            )}
 
-          {currentScreen === 'report' && currentResult && (
-            <motion.div
-              key="screen-report"
-              initial={{ opacity: 0, scale: 0.98 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.98 }}
-              transition={{ duration: 0.35, ease: 'easeInOut' }}
-              className="w-full h-full"
-            >
-              <ReportScreen
-                result={currentResult}
-                onNavigate={setCurrentScreen}
-                onOpenScanSheet={() => handleOpenScanSheet()}
-                onOpenSettings={() => setIsSettingsOpen(true)}
-                onOpenHistory={() => setIsHistoryOpen(true)}
-                onOpenHealth={() => setIsHealthOpen(true)}
-              />
-            </motion.div>
-          )}
-        </AnimatePresence>
+            {currentScreen === 'report' && currentResult && (
+              <motion.div
+                key="screen-report"
+                initial={{ opacity: 0, scale: 0.98 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.98 }}
+                transition={{ duration: 0.3, ease: 'easeInOut' }}
+                className="w-full h-full"
+              >
+                <ReportScreen
+                  result={currentResult}
+                  onNavigate={setCurrentScreen}
+                  onOpenScanSheet={() => handleOpenScanSheet()}
+                  onOpenSettings={() => setIsSettingsOpen(true)}
+                  onOpenHistory={() => setIsHistoryOpen(true)}
+                  onOpenHealth={() => setIsHealthOpen(true)}
+                />
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
 
         {/* Scan Input Animated Bottom Sheet with Universal File Upload */}
         <ScanBottomSheet

@@ -40,7 +40,11 @@ export async function analyzeWithGemini(
   attachedFiles: AttachedFile[],
   settings: UserSettings
 ): Promise<ScanResult> {
-  const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
+  // Read custom API key from settings or localStorage first, fallback to .env
+  const apiKey =
+    settings.customApiKey?.trim() ||
+    localStorage.getItem('scamsuno_custom_api_key')?.trim() ||
+    import.meta.env.VITE_GEMINI_API_KEY;
 
   if (!apiKey || apiKey.trim() === '' || apiKey === 'your_gemini_api_key_here') {
     throw new Error('API Error: Check API Key in Settings');
@@ -112,14 +116,15 @@ ${message.trim()}
     text: `${systemPrompt}\n\n${queryText}`
   });
 
-  // Attempt models: primary gemini-2.5-flash, fallback to gemini-flash-latest / gemini-3.8-flash if 404
-  const modelsToTry = ['gemini-2.5-flash', 'gemini-flash-latest', 'gemini-3.8-flash'];
-  let lastError: Error | null = null;
+  // Attempt candidate models with 4s timeout
+  const modelsToTry = ['gemini-2.5-flash', 'gemini-3.8-flash', 'gemini-flash-latest'];
+  let quotaExceeded = false;
+  let authFailed = false;
 
   for (const model of modelsToTry) {
     try {
       const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 9000);
+      const timeoutId = setTimeout(() => controller.abort(), 4000);
 
       const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
       const response = await fetch(url, {
@@ -182,16 +187,25 @@ ${message.trim()}
           };
         }
       } else {
-        const errorData = await response.json().catch(() => ({}));
-        console.warn(`Model ${model} failed with ${response.status}:`, errorData);
-        // Continue to try next candidate model
+        if (response.status === 429) {
+          quotaExceeded = true;
+        } else if (response.status === 401 || response.status === 403) {
+          authFailed = true;
+        }
+        console.warn(`Model ${model} returned status ${response.status}`);
       }
     } catch (err: unknown) {
       console.warn(`Error querying model ${model}:`, err);
-      lastError = err instanceof Error ? err : new Error(String(err));
     }
   }
 
-  // If no model succeeded, throw explicit error as required
-  throw lastError || new Error('API Error: Check API Key in Settings');
+  if (quotaExceeded) {
+    throw new Error('API Error: Quota exceeded (429). Check API Key in Settings.');
+  }
+
+  if (authFailed) {
+    throw new Error('API Error: Invalid API key (401/403). Check API Key in Settings.');
+  }
+
+  throw new Error('API Error: Check API Key in Settings');
 }

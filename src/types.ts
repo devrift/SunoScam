@@ -39,6 +39,7 @@ export interface UserSettings {
   theme: ThemeMode;
   language: AppLanguage;
   sensitivity: SecuritySensitivity;
+  customApiKey?: string;
 }
 
 export interface AttachedFile {

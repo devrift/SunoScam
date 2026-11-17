@@ -51,11 +51,12 @@ export const ReportScreen: React.FC<ReportScreenProps> = ({
   };
 
   return (
-    <div className="relative w-full h-full min-h-[640px] max-h-[880px] flex flex-col justify-between text-white overflow-hidden select-none pt-4">
+    <div className="relative w-full h-full flex flex-col justify-between text-white overflow-y-auto no-scrollbar select-none pt-3">
       {/* Header Bar */}
-      <div className="w-full px-6 pt-2 pb-2 flex items-center justify-between z-20">
+      <div className="w-full px-5 pt-1 pb-1 flex items-center justify-between z-20 flex-shrink-0">
         {/* Back / Reset Button */}
         <button
+          type="button"
           onClick={() => onNavigate('dashboard')}
           aria-label="Back to Dashboard"
           className="w-9 h-9 rounded-full bg-[#131722] border border-white/10 hover:border-white/20 flex items-center justify-center text-gray-400 hover:text-white transition-all active:scale-95 shadow-sm"
@@ -70,6 +71,7 @@ export const ReportScreen: React.FC<ReportScreenProps> = ({
 
         {/* Settings Cog */}
         <button
+          type="button"
           onClick={onOpenSettings}
           aria-label="Settings"
           className="w-9 h-9 rounded-full bg-[#131722] border border-white/10 hover:border-white/20 flex items-center justify-center text-gray-400 hover:text-white transition-all active:scale-95 shadow-sm"
@@ -79,7 +81,7 @@ export const ReportScreen: React.FC<ReportScreenProps> = ({
       </div>
 
       {/* Main Report Body */}
-      <div className="flex-1 overflow-y-auto no-scrollbar px-6 space-y-3 py-1 z-10">
+      <div className="flex-1 overflow-y-auto no-scrollbar px-5 space-y-3 py-1 z-10">
         
         {/* 1. Hero Card: Analysis Outcome */}
         <motion.div
@@ -237,6 +239,7 @@ export const ReportScreen: React.FC<ReportScreenProps> = ({
 
           {/* Copy Reply Button */}
           <motion.button
+            type="button"
             whileTap={{ scale: 0.98 }}
             onClick={handleCopyReply}
             className="w-full py-3 rounded-full font-bold text-xs tracking-wide text-white orange-gradient-btn flex items-center justify-center space-x-2 transition-all cursor-pointer shadow-[0_4px_18px_rgba(255,107,0,0.4)]"
@@ -258,13 +261,15 @@ export const ReportScreen: React.FC<ReportScreenProps> = ({
       </div>
 
       {/* Bottom Navigation Dock */}
-      <BottomDock
-        currentScreen="report"
-        onNavigate={onNavigate}
-        onOpenScan={onOpenScanSheet}
-        onOpenHistory={onOpenHistory}
-        onOpenHealth={onOpenHealth}
-      />
+      <div className="flex-shrink-0">
+        <BottomDock
+          currentScreen="report"
+          onNavigate={onNavigate}
+          onOpenScan={onOpenScanSheet}
+          onOpenHistory={onOpenHistory}
+          onOpenHealth={onOpenHealth}
+        />
+      </div>
     </div>
   );
 };
