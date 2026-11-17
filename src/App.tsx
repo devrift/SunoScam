@@ -169,9 +169,9 @@ export const App: React.FC = () => {
           <ArrowLeft className="w-3.5 h-3.5" />
           <span>Landing Page & APK</span>
         </button>
-        <span className="text-[11px] font-mono text-gray-500 flex items-center space-x-1">
+        <span className="text-[11px] font-mono text-amber-400 bg-amber-500/15 border border-amber-500/30 px-2 py-0.5 rounded-full flex items-center space-x-1">
           <Smartphone className="w-3 h-3 text-[#f59e0b]" />
-          <span>Live Mobile Guard</span>
+          <span>Prototype v1.0.0</span>
         </span>
       </div>
 
@@ -183,6 +183,12 @@ export const App: React.FC = () => {
 
       {/* Screen Frame Container (Mobile-first, Responsive) */}
       <div className={`relative w-full max-w-[410px] h-[calc(100dvh-50px)] sm:h-[min(844px,92vh)] ${canvasBgClass} sm:rounded-[40px] sm:border-[6px] sm:border-[#1E2536] shadow-[0_24px_64px_rgba(0,0,0,0.9),0_0_0_1px_rgba(255,255,255,0.08)] overflow-hidden flex flex-col justify-between transition-colors duration-300 my-auto`}>
+        {/* Prototype Phase Ribbon Banner */}
+        <div className="w-full bg-amber-500/10 border-b border-amber-500/20 py-1 px-3 text-center text-[10px] font-mono text-amber-300 font-medium z-30 flex items-center justify-center space-x-1.5">
+          <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse" />
+          <span>PROTOTYPE PHASE &bull; EXPERIMENTAL BUILD</span>
+        </div>
+
         {/* Screen Transitions */}
         <div className="relative w-full h-full flex-1 flex flex-col overflow-hidden">
           <AnimatePresence mode="wait">
