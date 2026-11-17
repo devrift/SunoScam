@@ -39,6 +39,7 @@ export const ScanBottomSheet: React.FC<ScanBottomSheetProps> = ({
   const [attachedFiles, setAttachedFiles] = useState<AttachedFile[]>([]);
   const [clipboardError, setClipboardError] = useState<string | null>(null);
   const [isDragging, setIsDragging] = useState(false);
+  const [isSubmittingCooldown, setIsSubmittingCooldown] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -158,8 +159,15 @@ export const ScanBottomSheet: React.FC<ScanBottomSheetProps> = ({
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    if (isSubmittingCooldown) return;
     if (!inputText.trim() && attachedFiles.length === 0) return;
+
+    setIsSubmittingCooldown(true);
     onAnalyze(inputText.trim(), attachedFiles);
+
+    setTimeout(() => {
+      setIsSubmittingCooldown(false);
+    }, 2000);
   };
 
   return (
@@ -341,16 +349,25 @@ export const ScanBottomSheet: React.FC<ScanBottomSheetProps> = ({
               {/* Analyze Now Button */}
               <button
                 type="submit"
-                disabled={!inputText.trim() && attachedFiles.length === 0}
+                disabled={isSubmittingCooldown || (!inputText.trim() && attachedFiles.length === 0)}
                 className={`w-full py-3.5 rounded-full font-bold text-sm tracking-wide text-white flex items-center justify-center space-x-2 transition-all shadow-[0_8px_24px_rgba(255,107,0,0.4)] ${
-                  inputText.trim() || attachedFiles.length > 0
+                  !isSubmittingCooldown && (inputText.trim() || attachedFiles.length > 0)
                     ? 'orange-gradient-btn cursor-pointer'
                     : 'bg-gray-800 text-gray-500 cursor-not-allowed opacity-60'
                 }`}
               >
-                <Sparkles className="w-4 h-4 text-white" />
-                <span>Analyze Now</span>
-                <ArrowRight className="w-4 h-4 text-white" />
+                {isSubmittingCooldown ? (
+                  <>
+                    <Sparkles className="w-4 h-4 text-white animate-spin" />
+                    <span>Analyzing...</span>
+                  </>
+                ) : (
+                  <>
+                    <Sparkles className="w-4 h-4 text-white" />
+                    <span>Analyze Now</span>
+                    <ArrowRight className="w-4 h-4 text-white" />
+                  </>
+                )}
               </button>
             </form>
           </motion.div>

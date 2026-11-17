@@ -21,6 +21,7 @@ export interface ScanResult {
     hostname?: string;
     riskFlags?: string[];
   };
+  isOfflineFallback?: boolean;
 }
 
 export interface PresetMessage {

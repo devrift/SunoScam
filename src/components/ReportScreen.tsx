@@ -10,7 +10,8 @@ import {
   Copy,
   Check,
   FileCode,
-  Globe
+  Globe,
+  Cpu
 } from 'lucide-react';
 import { WaveChart } from './WaveChart';
 import { SpeedometerGauge } from './SpeedometerGauge';
@@ -257,6 +258,14 @@ export const ReportScreen: React.FC<ReportScreenProps> = ({
             )}
           </motion.button>
         </motion.div>
+
+        {/* Subtle Offline Fallback Engine Badge */}
+        {result.isOfflineFallback && (
+          <div className="flex items-center justify-center space-x-1.5 py-1.5 px-3 mx-auto w-fit rounded-full bg-white/5 border border-white/10 text-[10px] text-gray-400 select-none">
+            <Cpu className="w-3 h-3 text-[#FFA14A]" />
+            <span>Analyzed via Local Offline Engine (API Quota Busy)</span>
+          </div>
+        )}
 
       </div>
 

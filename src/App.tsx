@@ -121,6 +121,7 @@ export const App: React.FC = () => {
         setIsScanning(false);
         setCurrentResult(result);
         setHistory((prev) => [result, ...prev.filter((item) => item.id !== result.id)]);
+        setApiError(null);
         setCurrentScreen('report');
       }, delayNeeded);
     } catch (err: unknown) {
