@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
+import { LandingPage } from './components/LandingPage';
 import { OnboardingScreen } from './components/OnboardingScreen';
 import { DashboardScreen } from './components/DashboardScreen';
 import { ReportScreen } from './components/ReportScreen';
@@ -8,6 +9,7 @@ import { SettingsModal } from './components/SettingsModal';
 import { HealthDrawer } from './components/HealthDrawer';
 import { HistoryModal } from './components/HistoryModal';
 import { analyzeWithGemini } from './services/gemini';
+import { ArrowLeft, Smartphone } from 'lucide-react';
 import type { Screen, ScanResult, UserSettings, AttachedFile } from './types';
 
 const DEFAULT_SETTINGS: UserSettings = {
@@ -17,6 +19,9 @@ const DEFAULT_SETTINGS: UserSettings = {
 };
 
 export const App: React.FC = () => {
+  // Check if viewing standalone landing page or app
+  const [viewMode, setViewMode] = useState<'landing' | 'app'>('landing');
+
   const [currentScreen, setCurrentScreen] = useState<Screen>(() => {
     const onboarded = localStorage.getItem('hasOnboarded');
     return onboarded === 'true' ? 'dashboard' : 'onboarding';
@@ -110,10 +115,9 @@ export const App: React.FC = () => {
     const startTime = Date.now();
 
     try {
-      // 3. Call live Gemini API directly
+      // 3. Call live Gemini API directly (with multi-model cascade & local fallback)
       const result = await analyzeWithGemini(text, files, settings);
 
-      // Ensure minimum 1.2s scanning effect so user sees the 3D radar sweep
       const elapsed = Date.now() - startTime;
       const delayNeeded = Math.max(0, 1200 - elapsed);
 
@@ -143,12 +147,34 @@ export const App: React.FC = () => {
     localStorage.removeItem('scamsuno_history');
   };
 
-  // Canvas background based on appearance setting
+  // If in Landing Page mode, render the rich BlindSight-style landing page
+  if (viewMode === 'landing') {
+    return (
+      <LandingPage onLaunchApp={() => setViewMode('app')} />
+    );
+  }
+
+  // App mode with back to landing page button
   const canvasBgClass = settings.theme === 'slate' ? 'bg-[#121724]' : 'bg-[#0B0D13]';
   const outerBgClass = settings.theme === 'slate' ? 'bg-[#0A0D15]' : 'bg-[#07080D]';
 
   return (
-    <div className={`min-h-screen w-full ${outerBgClass} flex items-center justify-center p-0 sm:p-3 md:p-5 overflow-x-hidden transition-colors duration-300`}>
+    <div className={`min-h-screen w-full ${outerBgClass} flex flex-col items-center justify-center p-0 sm:p-3 md:p-5 overflow-x-hidden transition-colors duration-300 relative`}>
+      {/* Top Bar Switcher to return to Landing Page */}
+      <div className="w-full max-w-[410px] flex items-center justify-between px-3 py-2 z-40">
+        <button
+          onClick={() => setViewMode('landing')}
+          className="flex items-center space-x-1.5 px-3 py-1.5 rounded-full bg-white/10 hover:bg-white/15 text-xs text-gray-300 hover:text-white transition-all backdrop-blur-md"
+        >
+          <ArrowLeft className="w-3.5 h-3.5" />
+          <span>Landing Page & APK</span>
+        </button>
+        <span className="text-[11px] font-mono text-gray-500 flex items-center space-x-1">
+          <Smartphone className="w-3 h-3 text-[#f59e0b]" />
+          <span>Live Mobile Guard</span>
+        </span>
+      </div>
+
       {/* Background ambient lighting */}
       <div className="fixed inset-0 pointer-events-none">
         <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[500px] h-[500px] bg-[#FF6B00]/10 rounded-full blur-[140px]" />
@@ -156,7 +182,7 @@ export const App: React.FC = () => {
       </div>
 
       {/* Screen Frame Container (Mobile-first, Responsive) */}
-      <div className={`relative w-full max-w-[410px] h-[100dvh] sm:h-[min(844px,96vh)] ${canvasBgClass} sm:rounded-[40px] sm:border-[6px] sm:border-[#1E2536] shadow-[0_24px_64px_rgba(0,0,0,0.9),0_0_0_1px_rgba(255,255,255,0.08)] overflow-hidden flex flex-col justify-between transition-colors duration-300 my-auto`}>
+      <div className={`relative w-full max-w-[410px] h-[calc(100dvh-50px)] sm:h-[min(844px,92vh)] ${canvasBgClass} sm:rounded-[40px] sm:border-[6px] sm:border-[#1E2536] shadow-[0_24px_64px_rgba(0,0,0,0.9),0_0_0_1px_rgba(255,255,255,0.08)] overflow-hidden flex flex-col justify-between transition-colors duration-300 my-auto`}>
         {/* Screen Transitions */}
         <div className="relative w-full h-full flex-1 flex flex-col overflow-hidden">
           <AnimatePresence mode="wait">
