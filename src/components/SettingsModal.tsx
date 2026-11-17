@@ -68,7 +68,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={onClose}
-            className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 transition-opacity"
+            className="fixed inset-0 bg-black/80 backdrop-blur-sm z-[90] transition-opacity"
           />
 
           {/* Settings Modal */}
@@ -77,7 +77,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
             animate={{ scale: 1, opacity: 1, y: 0 }}
             exit={{ scale: 0.94, opacity: 0, y: 10 }}
             transition={{ type: 'spring', damping: 25, stiffness: 350 }}
-            className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[92%] max-w-sm bg-[#131722] border border-white/10 rounded-3xl p-5 z-50 shadow-[0_24px_60px_rgba(0,0,0,0.9)] max-h-[88vh] overflow-y-auto no-scrollbar select-none"
+            className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[92%] max-w-sm bg-[#131722] border border-white/10 rounded-3xl p-5 z-[100] shadow-[0_24px_60px_rgba(0,0,0,0.9)] max-h-[88vh] overflow-y-auto no-scrollbar select-text"
           >
             {/* Header */}
             <div className="flex items-center justify-between pb-3.5 border-b border-white/10">
