@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="none">
+  <defs>
+    <linearGradient id="shieldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FF7A00" />
+      <stop offset="100%" stop-color="#FF3800" />
+    </linearGradient>
+    <radialGradient id="glowGrad" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#FF6B00" stop-opacity="0.4" />
+      <stop offset="100%" stop-color="#FF6B00" stop-opacity="0" />
+    </radialGradient>
+  </defs>
+  <rect width="512" height="512" rx="128" fill="#0B0D13" />
+  <circle cx="256" cy="256" r="220" fill="url(#glowGrad)" />
+  
+  <!-- Shackle -->
+  <path d="M196 230 V160 C196 126.86 222.86 100 256 100 C289.14 100 316 126.86 316 160 V190" 
+        stroke="#FFA14A" stroke-width="26" stroke-linecap="round" fill="none" />
+        
+  <!-- Shield Body -->
+  <path d="M156 220 C156 220 256 195 256 195 C256 195 356 220 356 220 V320 C356 390 256 430 256 430 C256 430 156 390 156 320 Z" 
+        fill="#141926" stroke="url(#shieldGrad)" stroke-width="14" />
+        
+  <!-- Keyhole -->
+  <circle cx="256" cy="285" r="22" fill="#FFA14A" />
+  <polygon points="248,285 264,285 268,340 244,340" fill="#FFA14A" />
+</svg>
