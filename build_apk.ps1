@@ -36,17 +36,12 @@ if (Test-Path "android-build/bin/aligned.apk") { Remove-Item "android-build/bin/
 & $zipalign -v -p 4 android-build/bin/unaligned.apk android-build/bin/aligned.apk
 if ($LASTEXITCODE -ne 0) { exit 1 }
 
-Write-Host "7. Creating keystore if needed..."
+Write-Host "7. Signing APK with apksigner..."
 $keystore = "android-build/debug.keystore"
-if (-not (Test-Path $keystore)) {
-    & $keytool -genkeypair -v -keystore $keystore -storepass android -alias androiddebugkey -keypass android -keyalg RSA -keysize 2048 -validity 10000 -dname "CN=SunoScam, OU=Security, O=SunoScam, L=Delhi, S=Delhi, C=IN"
-}
-
-Write-Host "8. Signing APK with apksigner..."
 & $apksigner sign --ks $keystore --ks-pass pass:android --key-pass pass:android --out public/SunoScam-v1.0.0.apk android-build/bin/aligned.apk
 if ($LASTEXITCODE -ne 0) { exit 1 }
 
-Write-Host "9. Verifying signed APK..."
+Write-Host "8. Verifying signed APK..."
 & $apksigner verify -v public/SunoScam-v1.0.0.apk
 
-Write-Host "SUCCESS: Valid standalone APK built at public/SunoScam-v1.0.0.apk"
+Write-Host "SUCCESS: Standalone APK ready at public/SunoScam-v1.0.0.apk"
