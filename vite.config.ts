@@ -1,3 +1,4 @@
+import { resolve } from 'path';
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import { VitePWA } from 'vite-plugin-pwa';
@@ -7,7 +8,7 @@ export default defineConfig({
     react(),
     VitePWA({
       registerType: 'autoUpdate',
-      includeAssets: ['favicon.ico', 'logo.svg', 'icon-192.png', 'icon-512.png'],
+      includeAssets: ['favicon.ico', 'logo.svg', 'icon-192.png', 'icon-512.png', 'assets/**/*'],
       manifest: {
         name: 'SUNO SCAM',
         short_name: 'SunoScam',
@@ -29,5 +30,13 @@ export default defineConfig({
         ]
       }
     })
-  ]
+  ],
+  build: {
+    rollupOptions: {
+      input: {
+        main: resolve(__dirname, 'index.html'),
+        app: resolve(__dirname, 'app.html')
+      }
+    }
+  }
 });
