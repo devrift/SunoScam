@@ -37,6 +37,7 @@ export type AppLanguage = 'Hinglish' | 'English' | 'Hindi';
 export type SecuritySensitivity = 'Standard' | 'Strict';
 
 export interface UserSettings {
+  userName: string;
   theme: ThemeMode;
   language: AppLanguage;
   sensitivity: SecuritySensitivity;

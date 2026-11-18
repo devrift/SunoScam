@@ -6,6 +6,7 @@ import { BottomDock } from './BottomDock';
 import type { Screen } from '../types';
 
 interface DashboardScreenProps {
+  userName?: string;
   onNavigate: (screen: Screen) => void;
   onOpenScanSheet: (initialText?: string) => void;
   onOpenSettings: () => void;
@@ -16,6 +17,7 @@ interface DashboardScreenProps {
 }
 
 export const DashboardScreen: React.FC<DashboardScreenProps> = ({
+  userName = 'Papa/Mummy',
   onNavigate,
   onOpenScanSheet,
   onOpenSettings,
@@ -44,7 +46,7 @@ export const DashboardScreen: React.FC<DashboardScreenProps> = ({
           </div>
 
           <div>
-            <h2 className="text-sm font-bold text-white tracking-tight">Papa/Mummy</h2>
+            <h2 className="text-sm font-bold text-white tracking-tight">{userName}</h2>
             <p className="text-[11px] text-gray-400 font-medium">Welcome</p>
           </div>
         </div>

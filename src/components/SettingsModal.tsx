@@ -11,7 +11,8 @@ import {
   Check,
   Key,
   Eye,
-  EyeOff
+  EyeOff,
+  User
 } from 'lucide-react';
 import type { UserSettings, AppLanguage, SecuritySensitivity } from '../types';
 
@@ -101,6 +102,25 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
             </div>
 
             <div className="mt-4 space-y-4">
+              {/* 0. Custom User Name Configuration */}
+              <div className="space-y-1.5 pb-2 border-b border-white/5">
+                <div className="flex items-center space-x-2 text-xs font-semibold text-gray-300">
+                  <User className="w-3.5 h-3.5 text-[#FF7A00]" />
+                  <span>Profile Name</span>
+                </div>
+                <input
+                  type="text"
+                  value={settings.userName || ''}
+                  onChange={(e) => onUpdateSettings({ userName: e.target.value })}
+                  placeholder="e.g. Papa, Mummy, Rahul..."
+                  maxLength={24}
+                  className="w-full bg-[#0B0D13] border border-white/10 rounded-xl px-3 py-2 text-xs text-white placeholder-gray-500 focus:outline-none focus:border-[#FF6B00] transition-colors"
+                />
+                <p className="text-[10px] text-gray-400 px-1">
+                  Appears on dashboard greeting and customizes family WhatsApp advice.
+                </p>
+              </div>
+
               {/* 1. Gemini API Key Configuration */}
               <div className="space-y-2">
                 <div className="flex items-center justify-between">

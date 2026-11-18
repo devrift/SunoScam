@@ -11,6 +11,7 @@ import { analyzeWithGemini } from './services/gemini';
 import type { Screen, ScanResult, UserSettings, AttachedFile } from './types';
 
 const DEFAULT_SETTINGS: UserSettings = {
+  userName: 'Papa/Mummy',
   theme: 'dark',
   language: 'Hinglish',
   sensitivity: 'Standard'
@@ -78,8 +79,9 @@ export const App: React.FC = () => {
     }
   }, [currentScreen, currentResult, history]);
 
-  const handleGetStarted = () => {
+  const handleOnboardingComplete = (chosenName: string) => {
     localStorage.setItem('hasOnboarded', 'true');
+    setSettings((prev) => ({ ...prev, userName: chosenName }));
     setCurrentScreen('dashboard');
   };
 
@@ -174,7 +176,10 @@ export const App: React.FC = () => {
                 transition={{ duration: 0.3, ease: 'easeInOut' }}
                 className="w-full h-full"
               >
-                <OnboardingScreen onGetStarted={handleGetStarted} />
+                <OnboardingScreen
+                  onComplete={handleOnboardingComplete}
+                  defaultName={settings.userName || 'Papa/Mummy'}
+                />
               </motion.div>
             )}
 
@@ -188,6 +193,7 @@ export const App: React.FC = () => {
                 className="w-full h-full"
               >
                 <DashboardScreen
+                  userName={settings.userName || 'Papa/Mummy'}
                   onNavigate={setCurrentScreen}
                   onOpenScanSheet={handleOpenScanSheet}
                   onOpenSettings={() => setIsSettingsOpen(true)}
